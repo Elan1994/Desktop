@@ -46,6 +46,7 @@
       body.dark-mode .save-button { background: linear-gradient(135deg, #517ff8, #6b63e8); box-shadow: 0 7px 18px rgba(62, 99, 225, .28), inset 0 1px rgba(255, 255, 255, .18); }
       body.dark-mode .save-button:hover { background: linear-gradient(135deg, #638dfb, #7b73ee); }
       body.dark-mode .theme-toggle { background: rgba(34, 48, 74, .75); border-color: rgba(153, 180, 231, .2); }
+      body.dark-mode .share-button { color: #d7e1ff; background: #294275; border-color: rgba(155, 184, 255, .16); }
 
       * { box-sizing: border-box; }
 
@@ -68,8 +69,11 @@
 
       .brand { font-size: 19px; font-weight: 750; letter-spacing: -.02em; }
       .brand span { color: var(--blue); }
-      .theme-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--background); color: var(--ink); border-radius: 999px; padding: 8px 11px; font: 700 13px inherit; cursor: pointer; }
+      .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+      .theme-toggle, .share-button { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--background); color: var(--ink); border-radius: 999px; padding: 8px 11px; font: 700 13px inherit; cursor: pointer; }
       .theme-toggle:hover { border-color: var(--blue); }
+      .share-button { color: #3158dc; background: var(--blue-soft); border-color: transparent; }
+      .share-button:hover { filter: brightness(.96); }
 
       main { max-width: 1120px; margin: 0 auto; padding: 54px 28px 72px; }
 
@@ -147,7 +151,7 @@
     </style>
   </head>
   <body>
-    <header><div class="brand">People<span>Hub</span></div><button class="theme-toggle" type="button" id="theme-toggle" aria-pressed="false"><span aria-hidden="true">☾</span><span id="theme-label">Dark mode</span></button></header>
+    <header><div class="brand">People<span>Hub</span></div><div class="header-actions"><button class="share-button" type="button" id="share-view"><span aria-hidden="true">↗</span>Share saved view</button><button class="theme-toggle" type="button" id="theme-toggle" aria-pressed="false"><span aria-hidden="true">☾</span><span id="theme-label">Dark mode</span></button></div></header>
     <main>
       <nav class="tabs" aria-label="Dashboard sections">
         <button class="tab active" type="button" data-panel="about" aria-selected="true">About</button>
@@ -231,6 +235,12 @@
         document.querySelectorAll('.panel').forEach((panel) => panel.hidden = panel.id !== tab.dataset.panel);
         tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
       }));
+      const readSharedState = () => {
+        const match = location.hash.match(/^#state=(.+)$/);
+        if (!match) return null;
+        try { return JSON.parse(decodeURIComponent(escape(atob(match[1])))); } catch { return null; }
+      };
+      const sharedState = readSharedState();
       const themeToggle = document.querySelector('#theme-toggle');
       const themeLabel = document.querySelector('#theme-label');
       const setTheme = (dark) => {
@@ -239,19 +249,19 @@
         themeToggle.firstElementChild.textContent = dark ? '☀' : '☾';
         themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
       };
-      setTheme(localStorage.getItem('peopleHubTheme') === 'dark');
+      setTheme(sharedState ? sharedState.theme === 'dark' : localStorage.getItem('peopleHubTheme') === 'dark');
       themeToggle.addEventListener('click', () => {
         const isDark = !document.body.classList.contains('dark-mode');
         setTheme(isDark); localStorage.setItem('peopleHubTheme', isDark ? 'dark' : 'light');
       });
       const storageKey = 'peopleHubProgress';
       const status = document.querySelector('#save-status');
-      const inputs = document.querySelectorAll('input[type="range"]');
+      const inputs = document.querySelectorAll('input[data-progress-id]');
       const updateOutput = (input) => { input.nextElementSibling.value = `${input.value}%`; input.nextElementSibling.textContent = `${input.value}%`; };
       try {
-        const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        const saved = sharedState ? (sharedState.progress || {}) : JSON.parse(localStorage.getItem(storageKey) || '{}');
         inputs.forEach((input) => { if (saved[input.dataset.progressId] !== undefined) input.value = saved[input.dataset.progressId]; updateOutput(input); });
-        if (Object.keys(saved).length) status.textContent = 'Saved progress loaded.';
+        if (Object.keys(saved).length) status.textContent = sharedState ? 'Shared progress view loaded.' : 'Saved progress loaded.';
       } catch { status.textContent = 'Progress storage is unavailable in this browser.'; }
       inputs.forEach((input) => input.addEventListener('input', () => { updateOutput(input); status.textContent = 'Changes are not saved yet.'; }));
       document.querySelector('#save-progress').addEventListener('click', () => {
@@ -269,10 +279,12 @@
           container.append(item);
         });
       };
+      const taskStore = {};
       document.querySelectorAll('[data-work-area]').forEach((area) => {
         const key = `peopleHub-${area.dataset.workArea}-tasks`;
         let tasks = [];
-        try { tasks = JSON.parse(localStorage.getItem(key) || '[]'); } catch { tasks = []; }
+        try { tasks = sharedState ? (sharedState.tasks?.[area.dataset.workArea] || []) : JSON.parse(localStorage.getItem(key) || '[]'); } catch { tasks = []; }
+        taskStore[area.dataset.workArea] = tasks;
         renderTasks(area, tasks);
         const form = area.querySelector('form');
         const range = form.elements.progress;
@@ -283,6 +295,15 @@
           localStorage.setItem(key, JSON.stringify(tasks));
           renderTasks(area, tasks); form.reset(); form.querySelector('label output').textContent = '0%';
         });
+      });
+      document.querySelector('#share-view').addEventListener('click', async () => {
+        const progress = Object.fromEntries([...inputs].map((input) => [input.dataset.progressId, input.value]));
+        const tasks = taskStore;
+        const snapshot = { theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light', progress, tasks };
+        const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(snapshot))));
+        const shareUrl = `${location.href.split('#')[0]}#state=${encoded}`;
+        try { await navigator.clipboard.writeText(shareUrl); alert('Share link copied. Anyone opening it will see this saved snapshot.'); }
+        catch { prompt('Copy this share link:', shareUrl); }
       });
     </script>
   </body>

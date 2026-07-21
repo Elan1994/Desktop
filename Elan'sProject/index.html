@@ -15,6 +15,21 @@
         --card: #ffffff;
       }
 
+      body.dark-mode {
+        --ink: #edf2ff;
+        --muted: #a9b5c8;
+        --line: #2c3850;
+        --blue: #6f91ff;
+        --blue-soft: #1d2b50;
+        --background: #111827;
+        --card: #1b2536;
+      }
+      body.dark-mode .tabs { background: #27334a; }
+      body.dark-mode .tab.active { background: #34425c; color: var(--ink); box-shadow: none; }
+      body.dark-mode .count { background: #173e35; color: #8ae6be; }
+      body.dark-mode .avatar.resource, body.dark-mode .tag, body.dark-mode .task-meta span { background: #2a374d; color: #c7d4e9; }
+      body.dark-mode .field input { background: #152033; color: var(--ink); border-color: #3b4961; }
+
       * { box-sizing: border-box; }
 
       body {
@@ -31,11 +46,13 @@
         align-items: center;
         padding: 0 clamp(24px, 6vw, 88px);
         border-bottom: 1px solid #e7ebf2;
-        background: rgba(255,255,255,.9);
+        background: var(--card);
       }
 
       .brand { font-size: 19px; font-weight: 750; letter-spacing: -.02em; }
       .brand span { color: var(--blue); }
+      .theme-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--background); color: var(--ink); border-radius: 999px; padding: 8px 11px; font: 700 13px inherit; cursor: pointer; }
+      .theme-toggle:hover { border-color: var(--blue); }
 
       main { max-width: 1120px; margin: 0 auto; padding: 54px 28px 72px; }
 
@@ -113,7 +130,7 @@
     </style>
   </head>
   <body>
-    <header><div class="brand">People<span>Hub</span></div></header>
+    <header><div class="brand">People<span>Hub</span></div><button class="theme-toggle" type="button" id="theme-toggle" aria-pressed="false"><span aria-hidden="true">☾</span><span id="theme-label">Dark mode</span></button></header>
     <main>
       <nav class="tabs" aria-label="Dashboard sections">
         <button class="tab active" type="button" data-panel="about" aria-selected="true">About</button>
@@ -197,6 +214,19 @@
         document.querySelectorAll('.panel').forEach((panel) => panel.hidden = panel.id !== tab.dataset.panel);
         tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
       }));
+      const themeToggle = document.querySelector('#theme-toggle');
+      const themeLabel = document.querySelector('#theme-label');
+      const setTheme = (dark) => {
+        document.body.classList.toggle('dark-mode', dark);
+        themeToggle.setAttribute('aria-pressed', dark);
+        themeToggle.firstElementChild.textContent = dark ? '☀' : '☾';
+        themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
+      };
+      setTheme(localStorage.getItem('peopleHubTheme') === 'dark');
+      themeToggle.addEventListener('click', () => {
+        const isDark = !document.body.classList.contains('dark-mode');
+        setTheme(isDark); localStorage.setItem('peopleHubTheme', isDark ? 'dark' : 'light');
+      });
       const storageKey = 'peopleHubProgress';
       const status = document.querySelector('#save-status');
       const inputs = document.querySelectorAll('input[type="range"]');

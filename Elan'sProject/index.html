@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Structure</title>
+    <style>
+      :root {
+        --ink: #172033;
+        --muted: #697386;
+        --line: #dce3ee;
+        --blue: #2f63f5;
+        --blue-soft: #edf2ff;
+        --background: #f7f9fc;
+        --card: #ffffff;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--background);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      header {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding: 0 clamp(24px, 6vw, 88px);
+        border-bottom: 1px solid #e7ebf2;
+        background: rgba(255,255,255,.9);
+      }
+
+      .brand { font-size: 19px; font-weight: 750; letter-spacing: -.02em; }
+      .brand span { color: var(--blue); }
+
+      main { max-width: 1120px; margin: 0 auto; padding: 54px 28px 72px; }
+
+      .tabs { display: flex; gap: 6px; margin: 0 0 34px; padding: 5px; width: fit-content; background: #edf1f7; border-radius: 11px; }
+      .tab { border: 0; padding: 10px 16px; border-radius: 8px; background: transparent; color: #617087; font: 700 14px inherit; cursor: pointer; }
+      .tab.active { color: var(--ink); background: white; box-shadow: 0 2px 7px rgba(29, 48, 78, .12); }
+      .panel[hidden] { display: none; }
+
+      .intro { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 40px; }
+      h1 { margin: 0 0 9px; font-size: clamp(29px, 4vw, 42px); letter-spacing: -.045em; }
+      .intro p { margin: 0; color: var(--muted); font-size: 16px; }
+      .count { white-space: nowrap; padding: 9px 13px; border-radius: 100px; background: #e9f7f1; color: #197650; font-size: 13px; font-weight: 700; }
+
+      .org-chart { position: relative; display: flex; flex-direction: column; align-items: center; }
+      .lead-card, .resource-card { background: var(--card); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(26, 40, 69, .05); }
+      .lead-card { width: min(100%, 430px); border-radius: 16px; padding: 22px; display: flex; align-items: center; gap: 16px; border-color: #bdccff; }
+      .avatar { flex: 0 0 auto; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #355df1, #7592ff); color: white; font-weight: 800; font-size: 16px; }
+      .avatar.resource { width: 43px; height: 43px; border-radius: 50%; background: #eef2f8; color: #365070; font-size: 13px; }
+      .lead-card h2, .resource-card h3 { margin: 0; font-size: 16px; letter-spacing: -.015em; }
+      .lead-card p, .resource-card p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+      .label { display: inline-block; margin-left: auto; padding: 6px 9px; border-radius: 7px; background: var(--blue-soft); color: #3158dc; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+
+      .connector { height: 46px; width: 2px; background: var(--line); }
+      .resource-wrap { width: 100%; position: relative; padding-top: 24px; }
+      .resource-wrap::before { content: ""; position: absolute; top: 0; left: 16.66%; right: 16.66%; height: 2px; background: var(--line); }
+      .resources { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .resource-item { position: relative; }
+      .resource-item::before { content: ""; position: absolute; width: 2px; height: 24px; background: var(--line); left: 50%; top: -24px; }
+      .resource-card { min-height: 106px; border-radius: 13px; padding: 18px; display: flex; align-items: center; gap: 13px; }
+      .tag { margin-top: 9px; display: inline-flex; padding: 4px 8px; border-radius: 5px; color: #526276; background: #f0f3f7; font-size: 11px; font-weight: 700; }
+
+      .deliverable-list { display: grid; gap: 18px; }
+      .progress-actions { display: flex; align-items: center; gap: 14px; margin: -13px 0 24px; }
+      .save-button { border: 0; border-radius: 9px; padding: 11px 16px; color: white; background: var(--blue); font: 750 14px inherit; cursor: pointer; box-shadow: 0 4px 10px rgba(47, 99, 245, .22); }
+      .save-button:hover { background: #2454e8; }
+      .save-status { color: var(--muted); font-size: 13px; }
+      .deliverable { border: 1px solid var(--line); background: var(--card); border-radius: 15px; padding: 24px; box-shadow: 0 10px 30px rgba(26, 40, 69, .04); }
+      .deliverable-head { display: flex; justify-content: space-between; gap: 18px; align-items: start; margin-bottom: 20px; }
+      .deliverable h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+      .deliverable-type { color: #3158dc; background: var(--blue-soft); border-radius: 100px; padding: 6px 10px; white-space: nowrap; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+      .assignment { display: grid; grid-template-columns: 190px 1fr 58px; gap: 15px; align-items: center; padding: 13px 0; border-top: 1px solid #edf0f4; }
+      .assignment-name { font-weight: 750; font-size: 14px; }
+      .assignment-role { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 500; }
+      input[type="range"] { width: 100%; accent-color: var(--blue); cursor: pointer; }
+      .percentage { text-align: right; color: #3158dc; font-size: 14px; font-weight: 800; }
+      .work-layout { display: grid; grid-template-columns: minmax(270px, .85fr) minmax(0, 1.45fr); gap: 22px; align-items: start; }
+      .task-form, .task-list-card { padding: 23px; border: 1px solid var(--line); border-radius: 15px; background: var(--card); box-shadow: 0 10px 30px rgba(26, 40, 69, .04); }
+      .task-form h2, .task-list-card h2 { margin: 0 0 17px; font-size: 17px; }
+      .field { display: grid; gap: 7px; margin-bottom: 14px; }
+      .field label { color: #536177; font-size: 12px; font-weight: 750; }
+      .field input { min-width: 0; border: 1px solid #d6deea; border-radius: 8px; padding: 10px 11px; font: 14px inherit; color: var(--ink); }
+      .field input:focus { outline: 2px solid #cbd8ff; border-color: var(--blue); }
+      .task-form .save-button { width: 100%; margin-top: 4px; }
+      .saved-task { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 15px 0; border-top: 1px solid #edf0f4; }
+      .saved-task:first-of-type { border-top: 0; padding-top: 0; }
+      .saved-task h3 { margin: 0 0 6px; font-size: 15px; }
+      .task-meta { display: flex; flex-wrap: wrap; gap: 7px; color: #58677c; font-size: 12px; }
+      .task-meta span { padding: 4px 7px; background: #f0f3f7; border-radius: 5px; }
+      .task-progress { text-align: right; color: #3158dc; font-size: 14px; font-weight: 800; }
+      .empty-state { margin: 0; color: var(--muted); font-size: 14px; }
+
+      @media (max-width: 700px) {
+        main { padding-top: 36px; }
+        .intro { align-items: start; flex-direction: column; margin-bottom: 30px; }
+        .resources { grid-template-columns: 1fr; max-width: 430px; margin: 0 auto; }
+        .resource-wrap { padding-top: 0; }
+        .resource-wrap::before, .resource-item::before { display: none; }
+        .resource-item { margin-top: 14px; }
+        .connector { height: 22px; }
+        .assignment { grid-template-columns: 1fr 50px; }
+        .assignment > div:first-child { grid-column: 1 / -1; }
+        .deliverable-head { flex-direction: column; }
+        .work-layout { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header><div class="brand">People<span>Hub</span></div></header>
+    <main>
+      <nav class="tabs" aria-label="Dashboard sections">
+        <button class="tab active" type="button" data-panel="about" aria-selected="true">About</button>
+        <button class="tab" type="button" data-panel="deliverables" aria-selected="false">Current PI Deliverables</button>
+        <button class="tab" type="button" data-panel="support" aria-selected="false">Production Support</button>
+        <button class="tab" type="button" data-panel="deployment" aria-selected="false">Deployment</button>
+      </nav>
+
+      <section class="panel" id="about">
+        <section class="intro">
+          <div>
+            <h1>Team structure</h1>
+            <p>People Lead and assigned resources.</p>
+          </div>
+          <div class="count">3 resources assigned</div>
+        </section>
+        <section class="org-chart" aria-label="Team hierarchy">
+          <article class="lead-card"><div class="avatar">EE</div><div><h2>Elanchezhiyan Elango</h2><p>People Lead</p></div><span class="label">People Lead</span></article>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="resource-wrap"><div class="resources">
+            <div class="resource-item"><article class="resource-card"><div class="avatar resource">SP</div><div><h3>Sai Preethi</h3><p>Developer / QA</p><span class="tag">Resource</span></div></article></div>
+            <div class="resource-item"><article class="resource-card"><div class="avatar resource">CH</div><div><h3>Chaturya</h3><p>Tester</p><span class="tag">Resource</span></div></article></div>
+            <div class="resource-item"><article class="resource-card"><div class="avatar resource">SU</div><div><h3>Sudheer</h3><p>Tester</p><span class="tag">Resource</span></div></article></div>
+          </div></div>
+        </section>
+      </section>
+
+      <section class="panel" id="deliverables" hidden>
+        <section class="intro"><div><h1>Current PI deliverables</h1><p>Update progress from 0 to 100% for each assigned activity.</p></div></section>
+        <div class="progress-actions"><button class="save-button" type="button" id="save-progress">Save progress</button><span class="save-status" id="save-status" aria-live="polite">Changes are not saved yet.</span></div>
+        <div class="deliverable-list">
+          <article class="deliverable"><div class="deliverable-head"><h2>Merative bulk upload feature for Accounts extract</h2><span class="deliverable-type">Current PI</span></div>
+            <div class="assignment"><div class="assignment-name">Sai Preethi<span class="assignment-role">Development</span></div><input type="range" min="0" max="100" value="0" data-progress-id="bulk-sai" aria-label="Sai Preethi development progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Chaturya<span class="assignment-role">Testing</span></div><input type="range" min="0" max="100" value="0" data-progress-id="bulk-chaturya" aria-label="Chaturya testing progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Sudheer<span class="assignment-role">Testing &amp; documentation</span></div><input type="range" min="0" max="100" value="0" data-progress-id="bulk-sudheer" aria-label="Sudheer testing and documentation progress"><output class="percentage">0%</output></div>
+          </article>
+          <article class="deliverable"><div class="deliverable-head"><h2>Eligibility extract for add premium amount</h2><span class="deliverable-type">Current PI</span></div>
+            <div class="assignment"><div class="assignment-name">Sai Preethi<span class="assignment-role">Development</span></div><input type="range" min="0" max="100" value="0" data-progress-id="eligibility-sai" aria-label="Sai Preethi development progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Chaturya<span class="assignment-role">Testing</span></div><input type="range" min="0" max="100" value="0" data-progress-id="eligibility-chaturya" aria-label="Chaturya testing progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Sudheer<span class="assignment-role">Testing &amp; documentation</span></div><input type="range" min="0" max="100" value="0" data-progress-id="eligibility-sudheer" aria-label="Sudheer testing and documentation progress"><output class="percentage">0%</output></div>
+          </article>
+          <article class="deliverable"><div class="deliverable-head"><h2>Merative outbound extract for security profiles and user roles</h2><span class="deliverable-type">Upcoming</span></div>
+            <div class="assignment"><div class="assignment-name">Sai Preethi<span class="assignment-role">Development</span></div><input type="range" min="0" max="100" value="0" data-progress-id="outbound-sai" aria-label="Sai Preethi development progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Chaturya<span class="assignment-role">Testing</span></div><input type="range" min="0" max="100" value="0" data-progress-id="outbound-chaturya" aria-label="Chaturya testing progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Sudheer<span class="assignment-role">Testing &amp; documentation</span></div><input type="range" min="0" max="100" value="0" data-progress-id="outbound-sudheer" aria-label="Sudheer testing and documentation progress"><output class="percentage">0%</output></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="support" hidden>
+        <section class="intro"><div><h1>Production support</h1><p>Add and track the production tasks your team is supporting.</p></div></section>
+        <div class="work-layout" data-work-area="support">
+          <form class="task-form"><h2>Add support task</h2>
+            <div class="field"><label for="support-task">Task name</label><input id="support-task" name="task" required placeholder="e.g. Investigate account extract issue"></div>
+            <div class="field"><label for="support-owner">Owner</label><input id="support-owner" name="owner" required placeholder="e.g. Sai Preethi"></div>
+            <div class="field"><label for="support-effort">Effort points</label><input id="support-effort" name="effort" type="number" min="0" step="0.5" required placeholder="e.g. 3"></div>
+            <div class="field"><label for="support-progress">Progress: <output>0%</output></label><input id="support-progress" name="progress" type="range" min="0" max="100" value="0"></div>
+            <button class="save-button" type="submit">Save support task</button>
+          </form>
+          <section class="task-list-card"><h2>Saved support tasks</h2><div class="saved-tasks"><p class="empty-state">No production support tasks saved yet.</p></div></section>
+        </div>
+      </section>
+
+      <section class="panel" id="deployment" hidden>
+        <section class="intro"><div><h1>Deployment</h1><p>Add and track tasks required for each deployment.</p></div></section>
+        <div class="work-layout" data-work-area="deployment">
+          <form class="task-form"><h2>Add deployment task</h2>
+            <div class="field"><label for="deployment-task">Task name</label><input id="deployment-task" name="task" required placeholder="e.g. Prepare production release notes"></div>
+            <div class="field"><label for="deployment-owner">Owner</label><input id="deployment-owner" name="owner" required placeholder="e.g. Sudheer"></div>
+            <div class="field"><label for="deployment-effort">Effort points</label><input id="deployment-effort" name="effort" type="number" min="0" step="0.5" required placeholder="e.g. 2"></div>
+            <div class="field"><label for="deployment-progress">Progress: <output>0%</output></label><input id="deployment-progress" name="progress" type="range" min="0" max="100" value="0"></div>
+            <button class="save-button" type="submit">Save deployment task</button>
+          </form>
+          <section class="task-list-card"><h2>Saved deployment tasks</h2><div class="saved-tasks"><p class="empty-state">No deployment tasks saved yet.</p></div></section>
+        </div>
+      </section>
+    </main>
+    <script>
+      document.querySelectorAll('.tab').forEach((tab) => tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((item) => { item.classList.remove('active'); item.setAttribute('aria-selected', 'false'); });
+        document.querySelectorAll('.panel').forEach((panel) => panel.hidden = panel.id !== tab.dataset.panel);
+        tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
+      }));
+      const storageKey = 'peopleHubProgress';
+      const status = document.querySelector('#save-status');
+      const inputs = document.querySelectorAll('input[type="range"]');
+      const updateOutput = (input) => { input.nextElementSibling.value = `${input.value}%`; input.nextElementSibling.textContent = `${input.value}%`; };
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        inputs.forEach((input) => { if (saved[input.dataset.progressId] !== undefined) input.value = saved[input.dataset.progressId]; updateOutput(input); });
+        if (Object.keys(saved).length) status.textContent = 'Saved progress loaded.';
+      } catch { status.textContent = 'Progress storage is unavailable in this browser.'; }
+      inputs.forEach((input) => input.addEventListener('input', () => { updateOutput(input); status.textContent = 'Changes are not saved yet.'; }));
+      document.querySelector('#save-progress').addEventListener('click', () => {
+        const progress = Object.fromEntries([...inputs].map((input) => [input.dataset.progressId, input.value]));
+        try { localStorage.setItem(storageKey, JSON.stringify(progress)); status.textContent = 'Progress saved successfully.'; }
+        catch { status.textContent = 'Progress could not be saved in this browser.'; }
+      });
+      const renderTasks = (area, tasks) => {
+        const container = area.querySelector('.saved-tasks');
+        container.replaceChildren();
+        if (!tasks.length) { container.innerHTML = '<p class="empty-state">No ' + (area.dataset.workArea === 'support' ? 'production support' : 'deployment') + ' tasks saved yet.</p>'; return; }
+        tasks.forEach((task) => {
+          const item = document.createElement('article'); item.className = 'saved-task';
+          item.innerHTML = `<div><h3>${task.name}</h3><div class="task-meta"><span>${task.owner}</span><span>${task.effort} effort points</span></div></div><div class="task-progress">${task.progress}%</div>`;
+          container.append(item);
+        });
+      };
+      document.querySelectorAll('[data-work-area]').forEach((area) => {
+        const key = `peopleHub-${area.dataset.workArea}-tasks`;
+        let tasks = [];
+        try { tasks = JSON.parse(localStorage.getItem(key) || '[]'); } catch { tasks = []; }
+        renderTasks(area, tasks);
+        const form = area.querySelector('form');
+        const range = form.elements.progress;
+        range.addEventListener('input', () => form.querySelector('label output').textContent = `${range.value}%`);
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          tasks.unshift({ name: form.elements.task.value.trim(), owner: form.elements.owner.value.trim(), effort: form.elements.effort.value, progress: range.value });
+          localStorage.setItem(key, JSON.stringify(tasks));
+          renderTasks(area, tasks); form.reset(); form.querySelector('label output').textContent = '0%';
+        });
+      });
+    </script>
+  </body>
+</html>

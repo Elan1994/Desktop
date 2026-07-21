@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Structure</title>
+    <style>
+      :root {
+        --ink: #172033;
+        --muted: #697386;
+        --line: #dce3ee;
+        --blue: #2f63f5;
+        --blue-soft: #edf2ff;
+        --background: #f7f9fc;
+        --card: #ffffff;
+      }
+
+      body.dark-mode {
+        --ink: #edf2ff;
+        --muted: #aebbd0;
+        --line: #34445e;
+        --blue: #82a2ff;
+        --blue-soft: #243863;
+        --background: #0a1020;
+        --card: #151f32;
+        color-scheme: dark;
+        background: radial-gradient(circle at 6% -8%, #22396d 0, transparent 31rem), radial-gradient(circle at 94% 0%, #172f51 0, transparent 26rem), #0a1020;
+      }
+      body.dark-mode header { background: rgba(12, 20, 36, .78); border-color: rgba(151, 175, 218, .14); box-shadow: 0 1px 0 rgba(255, 255, 255, .03); }
+      body.dark-mode .tabs { padding: 6px; background: rgba(27, 41, 66, .78); border: 1px solid rgba(158, 181, 224, .1); box-shadow: inset 0 1px rgba(255, 255, 255, .035); }
+      body.dark-mode .tab { color: #aebbd0; }
+      body.dark-mode .tab:hover { color: white; background: rgba(129, 161, 255, .09); }
+      body.dark-mode .tab.active { background: linear-gradient(135deg, #315aa8, #273f75); color: #f7f9ff; box-shadow: 0 5px 13px rgba(0, 0, 0, .25), inset 0 1px rgba(255, 255, 255, .13); }
+      body.dark-mode .count { background: linear-gradient(135deg, #164a42, #133b36); color: #9cf3ce; border: 1px solid rgba(110, 232, 183, .16); }
+      body.dark-mode .lead-card, body.dark-mode .resource-card, body.dark-mode .deliverable, body.dark-mode .task-form, body.dark-mode .task-list-card { border-color: rgba(160, 184, 228, .16); background: linear-gradient(145deg, rgba(29, 43, 68, .97), rgba(17, 27, 45, .97)); box-shadow: 0 16px 38px rgba(0, 0, 0, .22), inset 0 1px rgba(255, 255, 255, .035); }
+      body.dark-mode .lead-card { border-color: rgba(125, 162, 255, .55); box-shadow: 0 18px 43px rgba(0, 0, 0, .25), 0 0 0 1px rgba(90, 135, 250, .05), inset 0 1px rgba(255, 255, 255, .06); }
+      body.dark-mode .avatar { background: linear-gradient(135deg, #577cf4, #a58aff); box-shadow: 0 6px 18px rgba(76, 113, 241, .32); }
+      body.dark-mode .avatar.resource { background: #273854; color: #d5e0f3; box-shadow: none; }
+      body.dark-mode .tag, body.dark-mode .task-meta span { background: #263957; color: #d2ddef; }
+      body.dark-mode .connector, body.dark-mode .resource-wrap::before, body.dark-mode .resource-item::before { background: #405676; }
+      body.dark-mode .deliverable-type { background: #253d73; color: #b8caff; }
+      body.dark-mode .assignment, body.dark-mode .saved-task { border-color: rgba(163, 185, 224, .1); }
+      body.dark-mode .percentage, body.dark-mode .task-progress { color: #9bb5ff; }
+      body.dark-mode .field input { background: #0f192b; color: var(--ink); border-color: #3b4d6b; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .2); }
+      body.dark-mode .field input:focus { outline-color: #4d70be; border-color: #83a5ff; }
+      body.dark-mode .save-button { background: linear-gradient(135deg, #517ff8, #6b63e8); box-shadow: 0 7px 18px rgba(62, 99, 225, .28), inset 0 1px rgba(255, 255, 255, .18); }
+      body.dark-mode .save-button:hover { background: linear-gradient(135deg, #638dfb, #7b73ee); }
+      body.dark-mode .theme-toggle { background: rgba(34, 48, 74, .75); border-color: rgba(153, 180, 231, .2); }
+      body.dark-mode .share-button { color: #d7e1ff; background: #294275; border-color: rgba(155, 184, 255, .16); }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--background);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      header {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding: 0 clamp(24px, 6vw, 88px);
+        border-bottom: 1px solid #e7ebf2;
+        background: var(--card);
+      }
+
+      .brand { font-size: 19px; font-weight: 750; letter-spacing: -.02em; }
+      .brand span { color: var(--blue); }
+      .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+      .theme-toggle, .share-button { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--background); color: var(--ink); border-radius: 999px; padding: 8px 11px; font: 700 13px inherit; cursor: pointer; }
+      .theme-toggle:hover { border-color: var(--blue); }
+      .share-button { color: #3158dc; background: var(--blue-soft); border-color: transparent; }
+      .share-button:hover { filter: brightness(.96); }
+
+      main { max-width: 1120px; margin: 0 auto; padding: 54px 28px 72px; }
+
+      .tabs { display: flex; gap: 6px; margin: 0 0 34px; padding: 5px; width: fit-content; background: #edf1f7; border-radius: 11px; }
+      .tab { border: 0; padding: 10px 16px; border-radius: 8px; background: transparent; color: #617087; font: 700 14px inherit; cursor: pointer; }
+      .tab.active { color: var(--ink); background: white; box-shadow: 0 2px 7px rgba(29, 48, 78, .12); }
+      .panel[hidden] { display: none; }
+
+      .intro { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 40px; }
+      h1 { margin: 0 0 9px; font-size: clamp(29px, 4vw, 42px); letter-spacing: -.045em; }
+      .intro p { margin: 0; color: var(--muted); font-size: 16px; }
+      .count { white-space: nowrap; padding: 9px 13px; border-radius: 100px; background: #e9f7f1; color: #197650; font-size: 13px; font-weight: 700; }
+
+      .org-chart { position: relative; display: flex; flex-direction: column; align-items: center; }
+      .lead-card, .resource-card { background: var(--card); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(26, 40, 69, .05); }
+      .lead-card { width: min(100%, 430px); border-radius: 16px; padding: 22px; display: flex; align-items: center; gap: 16px; border-color: #bdccff; }
+      .avatar { flex: 0 0 auto; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #355df1, #7592ff); color: white; font-weight: 800; font-size: 16px; }
+      .avatar.resource { width: 43px; height: 43px; border-radius: 50%; background: #eef2f8; color: #365070; font-size: 13px; }
+      .lead-card h2, .resource-card h3 { margin: 0; font-size: 16px; letter-spacing: -.015em; }
+      .lead-card p, .resource-card p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+      .label { display: inline-block; margin-left: auto; padding: 6px 9px; border-radius: 7px; background: var(--blue-soft); color: #3158dc; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+
+      .connector { height: 46px; width: 2px; background: var(--line); }
+      .resource-wrap { width: 100%; position: relative; padding-top: 24px; }
+      .resource-wrap::before { content: ""; position: absolute; top: 0; left: 16.66%; right: 16.66%; height: 2px; background: var(--line); }
+      .resources { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .resource-item { position: relative; }
+      .resource-item::before { content: ""; position: absolute; width: 2px; height: 24px; background: var(--line); left: 50%; top: -24px; }
+      .resource-card { min-height: 106px; border-radius: 13px; padding: 18px; display: flex; align-items: center; gap: 13px; }
+      .tag { margin-top: 9px; display: inline-flex; padding: 4px 8px; border-radius: 5px; color: #526276; background: #f0f3f7; font-size: 11px; font-weight: 700; }
+
+      .deliverable-list { display: grid; gap: 18px; }
+      .progress-actions { display: flex; align-items: center; gap: 14px; margin: -13px 0 24px; }
+      .save-button { border: 0; border-radius: 9px; padding: 11px 16px; color: white; background: var(--blue); font: 750 14px inherit; cursor: pointer; box-shadow: 0 4px 10px rgba(47, 99, 245, .22); }
+      .save-button:hover { background: #2454e8; }
+      .save-status { color: var(--muted); font-size: 13px; }
+      .deliverable { border: 1px solid var(--line); background: var(--card); border-radius: 15px; padding: 24px; box-shadow: 0 10px 30px rgba(26, 40, 69, .04); }
+      .deliverable-head { display: flex; justify-content: space-between; gap: 18px; align-items: start; margin-bottom: 20px; }
+      .deliverable h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+      .deliverable-type { color: #3158dc; background: var(--blue-soft); border-radius: 100px; padding: 6px 10px; white-space: nowrap; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+      .assignment { display: grid; grid-template-columns: 190px 1fr 58px; gap: 15px; align-items: center; padding: 13px 0; border-top: 1px solid #edf0f4; }
+      .assignment-name { font-weight: 750; font-size: 14px; }
+      .assignment-role { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 500; }
+      input[type="range"] { width: 100%; accent-color: var(--blue); cursor: pointer; }
+      .percentage { text-align: right; color: #3158dc; font-size: 14px; font-weight: 800; }
+      .work-layout { display: grid; grid-template-columns: minmax(270px, .85fr) minmax(0, 1.45fr); gap: 22px; align-items: start; }
+      .task-form, .task-list-card { padding: 23px; border: 1px solid var(--line); border-radius: 15px; background: var(--card); box-shadow: 0 10px 30px rgba(26, 40, 69, .04); }
+      .task-form h2, .task-list-card h2 { margin: 0 0 17px; font-size: 17px; }
+      .field { display: grid; gap: 7px; margin-bottom: 14px; }
+      .field label { color: #536177; font-size: 12px; font-weight: 750; }
+      .field input { min-width: 0; border: 1px solid #d6deea; border-radius: 8px; padding: 10px 11px; font: 14px inherit; color: var(--ink); }
+      .field input:focus { outline: 2px solid #cbd8ff; border-color: var(--blue); }
+      .task-form .save-button { width: 100%; margin-top: 4px; }
+      .saved-task { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 15px 0; border-top: 1px solid #edf0f4; }
+      .saved-task:first-of-type { border-top: 0; padding-top: 0; }
+      .saved-task h3 { margin: 0 0 6px; font-size: 15px; }
+      .task-meta { display: flex; flex-wrap: wrap; gap: 7px; color: #58677c; font-size: 12px; }
+      .task-meta span { padding: 4px 7px; background: #f0f3f7; border-radius: 5px; }
+      .task-progress { text-align: right; color: #3158dc; font-size: 14px; font-weight: 800; }
+      .empty-state { margin: 0; color: var(--muted); font-size: 14px; }
+
+      @media (max-width: 700px) {
+        main { padding-top: 36px; }
+        .intro { align-items: start; flex-direction: column; margin-bottom: 30px; }
+        .resources { grid-template-columns: 1fr; max-width: 430px; margin: 0 auto; }
+        .resource-wrap { padding-top: 0; }
+        .resource-wrap::before, .resource-item::before { display: none; }
+        .resource-item { margin-top: 14px; }
+        .connector { height: 22px; }
+        .assignment { grid-template-columns: 1fr 50px; }
+        .assignment > div:first-child { grid-column: 1 / -1; }
+        .deliverable-head { flex-direction: column; }
+        .work-layout { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header><div class="brand">People<span>Hub</span></div><div class="header-actions"><button class="share-button" type="button" id="share-view"><span aria-hidden="true">↗</span>Share saved view</button><button class="theme-toggle" type="button" id="theme-toggle" aria-pressed="false"><span aria-hidden="true">☾</span><span id="theme-label">Dark mode</span></button></div></header>
+    <main>
+      <nav class="tabs" aria-label="Dashboard sections">
+        <button class="tab active" type="button" data-panel="about" aria-selected="true">About</button>
+        <button class="tab" type="button" data-panel="deliverables" aria-selected="false">Current PI Deliverables</button>
+        <button class="tab" type="button" data-panel="support" aria-selected="false">Production Support</button>
+        <button class="tab" type="button" data-panel="deployment" aria-selected="false">Deployment</button>
+      </nav>
+
+      <section class="panel" id="about">
+        <section class="intro">
+          <div>
+            <h1>Team structure</h1>
+            <p>People Lead and assigned resources.</p>
+          </div>
+          <div class="count">3 resources assigned</div>
+        </section>
+        <section class="org-chart" aria-label="Team hierarchy">
+          <article class="lead-card"><div class="avatar">EE</div><div><h2>Elanchezhiyan Elango</h2><p>People Lead</p></div><span class="label">People Lead</span></article>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="resource-wrap"><div class="resources">
+            <div class="resource-item"><article class="resource-card"><div class="avatar resource">SP</div><div><h3>Sai Preethi</h3><p>Developer / QA</p><span class="tag">Resource</span></div></article></div>
+            <div class="resource-item"><article class="resource-card"><div class="avatar resource">CH</div><div><h3>Chaturya</h3><p>Tester</p><span class="tag">Resource</span></div></article></div>
+            <div class="resource-item"><article class="resource-card"><div class="avatar resource">SU</div><div><h3>Sudheer</h3><p>Tester</p><span class="tag">Resource</span></div></article></div>
+          </div></div>
+        </section>
+      </section>
+
+      <section class="panel" id="deliverables" hidden>
+        <section class="intro"><div><h1>Current PI deliverables</h1><p>Update progress from 0 to 100% for each assigned activity.</p></div></section>
+        <div class="progress-actions"><button class="save-button" type="button" id="save-progress">Save progress</button><span class="save-status" id="save-status" aria-live="polite">Changes are not saved yet.</span></div>
+        <div class="deliverable-list">
+          <article class="deliverable"><div class="deliverable-head"><h2>Merative bulk upload feature for Accounts extract</h2><span class="deliverable-type">Current PI</span></div>
+            <div class="assignment"><div class="assignment-name">Sai Preethi<span class="assignment-role">Development</span></div><input type="range" min="0" max="100" value="0" data-progress-id="bulk-sai" aria-label="Sai Preethi development progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Chaturya<span class="assignment-role">Testing</span></div><input type="range" min="0" max="100" value="0" data-progress-id="bulk-chaturya" aria-label="Chaturya testing progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Sudheer<span class="assignment-role">Testing &amp; documentation</span></div><input type="range" min="0" max="100" value="0" data-progress-id="bulk-sudheer" aria-label="Sudheer testing and documentation progress"><output class="percentage">0%</output></div>
+          </article>
+          <article class="deliverable"><div class="deliverable-head"><h2>Eligibility extract for add premium amount</h2><span class="deliverable-type">Current PI</span></div>
+            <div class="assignment"><div class="assignment-name">Sai Preethi<span class="assignment-role">Development</span></div><input type="range" min="0" max="100" value="0" data-progress-id="eligibility-sai" aria-label="Sai Preethi development progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Chaturya<span class="assignment-role">Testing</span></div><input type="range" min="0" max="100" value="0" data-progress-id="eligibility-chaturya" aria-label="Chaturya testing progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Sudheer<span class="assignment-role">Testing &amp; documentation</span></div><input type="range" min="0" max="100" value="0" data-progress-id="eligibility-sudheer" aria-label="Sudheer testing and documentation progress"><output class="percentage">0%</output></div>
+          </article>
+          <article class="deliverable"><div class="deliverable-head"><h2>Merative outbound extract for security profiles and user roles</h2><span class="deliverable-type">Upcoming</span></div>
+            <div class="assignment"><div class="assignment-name">Sai Preethi<span class="assignment-role">Development</span></div><input type="range" min="0" max="100" value="0" data-progress-id="outbound-sai" aria-label="Sai Preethi development progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Chaturya<span class="assignment-role">Testing</span></div><input type="range" min="0" max="100" value="0" data-progress-id="outbound-chaturya" aria-label="Chaturya testing progress"><output class="percentage">0%</output></div>
+            <div class="assignment"><div class="assignment-name">Sudheer<span class="assignment-role">Testing &amp; documentation</span></div><input type="range" min="0" max="100" value="0" data-progress-id="outbound-sudheer" aria-label="Sudheer testing and documentation progress"><output class="percentage">0%</output></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="support" hidden>
+        <section class="intro"><div><h1>Production support</h1><p>Add and track the production tasks your team is supporting.</p></div></section>
+        <div class="work-layout" data-work-area="support">
+          <form class="task-form"><h2>Add support task</h2>
+            <div class="field"><label for="support-task">Task name</label><input id="support-task" name="task" required placeholder="e.g. Investigate account extract issue"></div>
+            <div class="field"><label for="support-owner">Owner</label><input id="support-owner" name="owner" required placeholder="e.g. Sai Preethi"></div>
+            <div class="field"><label for="support-effort">Effort points</label><input id="support-effort" name="effort" type="number" min="0" step="0.5" required placeholder="e.g. 3"></div>
+            <div class="field"><label for="support-progress">Progress: <output>0%</output></label><input id="support-progress" name="progress" type="range" min="0" max="100" value="0"></div>
+            <button class="save-button" type="submit">Save support task</button>
+          </form>
+          <section class="task-list-card"><h2>Saved support tasks</h2><div class="saved-tasks"><p class="empty-state">No production support tasks saved yet.</p></div></section>
+        </div>
+      </section>
+
+      <section class="panel" id="deployment" hidden>
+        <section class="intro"><div><h1>Deployment</h1><p>Add and track tasks required for each deployment.</p></div></section>
+        <div class="work-layout" data-work-area="deployment">
+          <form class="task-form"><h2>Add deployment task</h2>
+            <div class="field"><label for="deployment-task">Task name</label><input id="deployment-task" name="task" required placeholder="e.g. Prepare production release notes"></div>
+            <div class="field"><label for="deployment-owner">Owner</label><input id="deployment-owner" name="owner" required placeholder="e.g. Sudheer"></div>
+            <div class="field"><label for="deployment-effort">Effort points</label><input id="deployment-effort" name="effort" type="number" min="0" step="0.5" required placeholder="e.g. 2"></div>
+            <div class="field"><label for="deployment-progress">Progress: <output>0%</output></label><input id="deployment-progress" name="progress" type="range" min="0" max="100" value="0"></div>
+            <button class="save-button" type="submit">Save deployment task</button>
+          </form>
+          <section class="task-list-card"><h2>Saved deployment tasks</h2><div class="saved-tasks"><p class="empty-state">No deployment tasks saved yet.</p></div></section>
+        </div>
+      </section>
+    </main>
+    <script>
+      document.querySelectorAll('.tab').forEach((tab) => tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((item) => { item.classList.remove('active'); item.setAttribute('aria-selected', 'false'); });
+        document.querySelectorAll('.panel').forEach((panel) => panel.hidden = panel.id !== tab.dataset.panel);
+        tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
+      }));
+      const readSharedState = () => {
+        const match = location.hash.match(/^#state=(.+)$/);
+        if (!match) return null;
+        try { return JSON.parse(decodeURIComponent(escape(atob(match[1])))); } catch { return null; }
+      };
+      const sharedState = readSharedState();
+      const themeToggle = document.querySelector('#theme-toggle');
+      const themeLabel = document.querySelector('#theme-label');
+      const setTheme = (dark) => {
+        document.body.classList.toggle('dark-mode', dark);
+        themeToggle.setAttribute('aria-pressed', dark);
+        themeToggle.firstElementChild.textContent = dark ? '☀' : '☾';
+        themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
+      };
+      setTheme(sharedState ? sharedState.theme === 'dark' : localStorage.getItem('peopleHubTheme') === 'dark');
+      themeToggle.addEventListener('click', () => {
+        const isDark = !document.body.classList.contains('dark-mode');
+        setTheme(isDark); localStorage.setItem('peopleHubTheme', isDark ? 'dark' : 'light');
+      });
+      const storageKey = 'peopleHubProgress';
+      const status = document.querySelector('#save-status');
+      const inputs = document.querySelectorAll('input[data-progress-id]');
+      const updateOutput = (input) => { input.nextElementSibling.value = `${input.value}%`; input.nextElementSibling.textContent = `${input.value}%`; };
+      try {
+        const saved = sharedState ? (sharedState.progress || {}) : JSON.parse(localStorage.getItem(storageKey) || '{}');
+        inputs.forEach((input) => { if (saved[input.dataset.progressId] !== undefined) input.value = saved[input.dataset.progressId]; updateOutput(input); });
+        if (Object.keys(saved).length) status.textContent = sharedState ? 'Shared progress view loaded.' : 'Saved progress loaded.';
+      } catch { status.textContent = 'Progress storage is unavailable in this browser.'; }
+      inputs.forEach((input) => input.addEventListener('input', () => { updateOutput(input); status.textContent = 'Changes are not saved yet.'; }));
+      document.querySelector('#save-progress').addEventListener('click', () => {
+        const progress = Object.fromEntries([...inputs].map((input) => [input.dataset.progressId, input.value]));
+        try { localStorage.setItem(storageKey, JSON.stringify(progress)); status.textContent = 'Progress saved successfully.'; }
+        catch { status.textContent = 'Progress could not be saved in this browser.'; }
+      });
+      const renderTasks = (area, tasks) => {
+        const container = area.querySelector('.saved-tasks');
+        container.replaceChildren();
+        if (!tasks.length) { container.innerHTML = '<p class="empty-state">No ' + (area.dataset.workArea === 'support' ? 'production support' : 'deployment') + ' tasks saved yet.</p>'; return; }
+        tasks.forEach((task) => {
+          const item = document.createElement('article'); item.className = 'saved-task';
+          item.innerHTML = `<div><h3>${task.name}</h3><div class="task-meta"><span>${task.owner}</span><span>${task.effort} effort points</span></div></div><div class="task-progress">${task.progress}%</div>`;
+          container.append(item);
+        });
+      };
+      const taskStore = {};
+      document.querySelectorAll('[data-work-area]').forEach((area) => {
+        const key = `peopleHub-${area.dataset.workArea}-tasks`;
+        let tasks = [];
+        try { tasks = sharedState ? (sharedState.tasks?.[area.dataset.workArea] || []) : JSON.parse(localStorage.getItem(key) || '[]'); } catch { tasks = []; }
+        taskStore[area.dataset.workArea] = tasks;
+        renderTasks(area, tasks);
+        const form = area.querySelector('form');
+        const range = form.elements.progress;
+        range.addEventListener('input', () => form.querySelector('label output').textContent = `${range.value}%`);
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          tasks.unshift({ name: form.elements.task.value.trim(), owner: form.elements.owner.value.trim(), effort: form.elements.effort.value, progress: range.value });
+          localStorage.setItem(key, JSON.stringify(tasks));
+          renderTasks(area, tasks); form.reset(); form.querySelector('label output').textContent = '0%';
+        });
+      });
+      document.querySelector('#share-view').addEventListener('click', async () => {
+        const progress = Object.fromEntries([...inputs].map((input) => [input.dataset.progressId, input.value]));
+        const tasks = taskStore;
+        const snapshot = { theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light', progress, tasks };
+        const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(snapshot))));
+        const shareUrl = `${location.href.split('#')[0]}#state=${encoded}`;
+        try { await navigator.clipboard.writeText(shareUrl); alert('Share link copied. Anyone opening it will see this saved snapshot.'); }
+        catch { prompt('Copy this share link:', shareUrl); }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RTO Monday Compliance Tracker</title><style>
+:root{--navy:#102a43;--blue:#1769aa;--green:#137a4c;--red:#b42318;--bg:#f5f7fa;--line:#e4e9ef;--muted:#667085}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:#172033}.top{background:var(--navy);color:#fff;padding:15px 32px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;font-size:19px}.top small{color:#c9d8e6;display:block;margin-top:2px}.year{border:1px solid #4d6c88;border-radius:7px;padding:8px 10px;font-size:13px}main{max-width:1570px;margin:auto;padding:27px 32px}.intro{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}.intro h1{font-size:24px;margin:0 0 5px}.intro p{color:var(--muted);margin:0;font-size:14px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}.stat{background:#fff;border:1px solid var(--line);border-radius:11px;padding:15px 17px}.stat span{color:var(--muted);font-size:12px;font-weight:700}.stat strong{display:block;font-size:25px;margin-top:5px}.stat.ok strong{color:var(--green)}.stat.no strong{color:var(--red)}.stat.overall{background:#f0f8ff;border-color:#b9d9f3}.stat.overall strong{color:var(--blue)}.controls{background:#fff;border:1px solid var(--line);border-radius:11px 11px 0 0;padding:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}label{font-size:11px;font-weight:800;color:#475467}select,input{height:35px;border:1px solid #d0d5dd;border-radius:7px;padding:0 9px;background:#fff;font:inherit;font-size:12px;color:#172033}select{min-width:190px}.search{margin-left:auto;min-width:230px}button{border:0;border-radius:7px;padding:8px 10px;font-weight:750;cursor:pointer;font:inherit;font-size:12px}.secondary{background:#eff3f7;color:#344054}.primary{background:var(--blue);color:#fff}.table{overflow:auto;background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 11px 11px}table{width:100%;min-width:1060px;border-collapse:collapse;font-size:12px}th{background:#f8fafc;color:#475467;font-size:10px;letter-spacing:.25px;text-transform:uppercase;text-align:left;padding:11px 10px;white-space:nowrap;border-bottom:1px solid var(--line)}td{padding:9px 10px;border-bottom:1px solid #edf0f3;vertical-align:middle}.team td{background:#edf5fb;color:#154c79;padding:8px 10px;font-weight:800}.team span{float:right;color:#5d7d99;font-size:11px}.name{font-weight:700}.toggle{min-width:96px}.pending{background:#edf1f5;color:#526274}.yes{background:#eaf8f0;color:var(--green)}.no{background:#fff0ef;color:var(--red)}.pill{display:inline-block;padding:4px 7px;border-radius:30px;font-size:10px;font-weight:800}.compliant{background:#eaf8f0;color:var(--green)}.non-compliant{background:#fff0ef;color:var(--red)}.not-updated{background:#edf1f5;color:#526274}.comment{display:flex;gap:5px}.comment input{width:150px;height:30px}.saved{background:var(--green);color:#fff}.notice{position:fixed;right:22px;bottom:22px;background:#123e2a;color:#fff;padding:11px 14px;border-radius:8px;font-size:13px;font-weight:700;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}.notice.show{opacity:1;transform:none}.note{font-size:12px;color:var(--muted);margin:13px 2px}@media(max-width:900px){main{padding:20px 14px}.stats{grid-template-columns:repeat(2,1fr)}.top,.intro{align-items:flex-start;flex-direction:column}.search{margin-left:0;width:100%}}
+</style></head><body><header class="top"><div><div class="brand">RTO Weekly Compliance</div><small>Monday attendance · team view</small></div><div class="year">Compliance year · 2026</div></header><main><section class="intro"><div><h1>Monday attendance tracker</h1><p>Resources are grouped by team. Mark Monday attendance and seat booking for each week.</p></div></section><section class="stats"><div class="stat"><span>Resources in view</span><strong id="total">0</strong></div><div class="stat ok"><span>Compliant this Monday</span><strong id="yesCount">0</strong></div><div class="stat no"><span>Non-compliant this Monday</span><strong id="noCount">0</strong></div><div class="stat"><span>Compliance rate in view</span><strong id="rate">—</strong></div><div class="stat overall"><span>Overall compliance · all teams</span><strong id="overall">—</strong></div></section><section class="controls"><label>Monday<br><select id="week"></select></label><label>Team<br><select id="team"><option value="All">All teams</option></select></label><input class="search" id="search" placeholder="Search resource name"><button class="secondary" id="clear">Clear filters</button><button class="primary" id="export">Export employee details</button></section><section class="table"><table><thead><tr><th>Team</th><th>Resource name</th><th>Base location</th><th>Assigned facility</th><th>Booked seat for Monday</th><th>Monday attended</th><th>Compliance status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></section><p class="note">Rule: Monday attended = Yes is Compliant; No is Non-compliant. Select any Monday through 28 December 2026.</p></main><div class="notice" id="notice">Comment saved</div><script>
+const raw=`Governance|Gopalakrishnan G M S|Chennai|CDC2A
+PMO|Valarmathi Sikkan|Chennai|CDC2A
+Actuarial|Dasa Niharika|Hyderabad|HDC3C
+Actuarial|Jayanthi Seetharaman|Chennai|CDC2A
+Actuarial|Kasirajasathish Pattu Raja|Coimbatore|CODC1A
+Actuarial|Pranavi Thegalapalle|Hyderabad|HDC3B
+Alpha|Giridharan Logaiah|Chennai|CDC2A
+Alpha|Himabindu Kavali|Hyderabad|HDC3B
+Alpha|Nishanthi Saravanan|Chennai|CDC2A
+Alpha|Prem Mathavan Nagendran|Chennai|CDC2E
+Alpha|Sankar Somasundaram|Chennai|CDC2E
+Avalanche|Abdus Samad Khwaja|Hyderabad|HDC3B
+Avalanche|Mohan Devapathni|Bengaluru|BDC7B
+Avalanche|Nimisha Mathews|Bengaluru|BDC7B
+Avalanche|Pedapati Avinash|Hyderabad|HDC3B
+Avalanche|Punitha Tamilsekaran|Chennai|CDC2E
+Avalanche|Shivani Gupta|Hyderabad|HDC3B
+Defenders|Barath Aravind P|Chennai|CDC2A
+Defenders|Lavanya Arulappan|Chennai|CDC2A
+Defenders|Preethiwin Ravi|Bengaluru|BDC7B
+Defenders|Rahul Meka|Hyderabad|HDC3B
+Defenders|Rizwana Shaik|Hyderabad|HDC3B
+Defenders|Srinath Reddy T V|Bengaluru|BDC7B
+Defenders|Thejes S S|Bengaluru|BDC11
+Defenders|Vignesh Parthasarathy|Chennai|CDC2A
+Eagles|Manisha Yerra|Hyderabad|HDC3B
+Eagles|Saravanan Kumar|Chennai|CDC2A
+Eagles|Satti Veera Venkata Satyanarayana|Hyderabad|HDC3B
+Eagles|Yeshwanth Viswanathan|Bengaluru|BDC7B
+Floating|Chukkala Yoganandha|Chennai|CDC2E
+Floating|Karthika Manimaran|Chennai|CDC2A
+Floating|Motam Sai Varshitha|Hyderabad|HDC3C
+Floating|Saran Babu Annaraj|Chennai|CDC2A
+Floating|Shiny Sudhakar|Chennai|CDC2E
+Floating|Thummala Santhipriya|Bengaluru|BDC7B
+Floating|Yamini Guptha Ch|Hyderabad|HDC3B
+Hydra|Bana Reddy Srinath|Hyderabad|HDC3B
+Hydra|Dilip Jonna|Chennai|CDC2A
+Hydra|Gautham Senthilnathan|Chennai|CDC2A
+Hydra|Jagadish Viyyapu|Hyderabad|HDC3B
+Hydra|Preetham A. S S|Bengaluru|BDC7B
+Hydra|Ranjith Kolantapaiyan|Coimbatore|CODC1A
+Hydra|Sanjai Kumar Arjunan|Coimbatore|CODC1A
+Legends|Addagudur Asrika|Hyderabad|HDC3B
+Legends|Devarakonda Sai Krishna Reddy|Hyderabad|HDC3B
+Legends|Divya Sri Vuyyuru|Hyderabad|HDC3B
+Legends|Divyani Upadhyay|Hyderabad|HDC3B
+ML|Iswarya Ori|Chennai|CDC2E
+ML|Sharon Shanmathi|Chennai|CDC2A
+ML|Sravani Muvvala|Hyderabad|HDC3B
+Production Support|Anurag Raul|Bhubaneswar|BBDC1A
+Production Support|Deepak Kumar|Noida|DDC4A
+Production Support|Diksha Shankar Attigeri|Bengaluru|BDC7B
+Production Support|Juvan John Palathingal|Bengaluru|BDC7A
+Production Support|Rahul Selvam|Chennai|CDC2A
+Production Support|Rohan Narayan Bhanu|Mumbai|MDC5C
+Production Support|Sagar Prabhakar Gabhane|Nagpur|NGDC1A
+Production Support|Sai Manasa Amaladasu|Hyderabad|HDC3B
+Production Support|Sundar Pandi|Chennai|CDC2A
+Production Support|Vinay Teegala (Vinay Akash Teegala)|Hyderabad|HDC3B
+Production Support|Pratheep Kannan|Chennai|CDC2A
+Shield|Adari Chaturya Sri|Hyderabad|HDC3B
+Shield|Elanchezhiyan Elango|Chennai|CDC2A
+Shield|Lakshmi Sudheer Peta|Hyderabad|HDC3B
+Shield|Sai Preethi Datla|Hyderabad|HDC3B
+Shield|Shruthi Maalika Mohan|Chennai|CDC2A
+Spartans|Aravindhan Suresh|Coimbatore|CODC1A
+Spartans|Samhitha Korakoppula|Hyderabad|HDC4
+Spartans|Sowmya Chandrasekaran|Chennai|CDC2A
+Spartans|Venkata Sai Patlegar|Hyderabad|HDC3B
+Spartans|Devika Chidambaram|Chennai|CDC2A
+Trailblazers|C Ravi Kumar|Bengaluru|BDC7B
+Trailblazers|Kruthi Modekurti|Bengaluru|BDC7B
+Trailblazers|Niladri Das|Kolkata|KDC1A
+Trailblazers|Ramaprabha D. Dd|Chennai|CDC2E
+Trailblazers|Sreevigneshwaran Asokan|Chennai|CDC2A`;
+const people=raw.split('\n').map((x,i)=>{const[team,name,base,facility]=x.split('|');return{id:`R${String(i+1).padStart(3,'0')}`,team,name,base,facility}}),attendance=JSON.parse(localStorage.getItem('rto-attendance-2026')||'{}'),seats=JSON.parse(localStorage.getItem('rto-booked-seats-2026')||'{}'),notes=JSON.parse(localStorage.getItem('rto-comments-2026')||'{}');let justSaved='';const $=s=>document.querySelector(s),week=$('#week'),team=$('#team'),search=$('#search'),fmt=d=>d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),iso=d=>d.toISOString().slice(0,10),key=r=>`${week.value}:${r.id}`,state=r=>attendance[key(r)]||'Pending',seat=r=>seats[key(r)]||'Pending',note=r=>notes[key(r)]||'',compliance=r=>state(r)==='Yes'?'Compliant':state(r)==='No'?'Non-compliant':'Not updated',esc=v=>String(v).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+for(let d=new Date(2026,0,5);d.getFullYear()===2026;d.setDate(d.getDate()+7))week.add(new Option(`${fmt(d)} · Monday`,iso(d)));week.value='2026-07-27';[...new Set(people.map(r=>r.team))].sort().forEach(x=>team.add(new Option(x,x)));
+function render(){const q=search.value.trim().toLowerCase(),shown=people.filter(r=>(team.value==='All'||r.team===team.value)&&r.name.toLowerCase().includes(q)),body=$('#rows');body.innerHTML='';[...new Set(shown.map(r=>r.team))].sort().forEach(t=>{const group=shown.filter(r=>r.team===t);body.insertAdjacentHTML('beforeend',`<tr class="team"><td colspan="8">${t}<span>${group.length} resources</span></td></tr>`);group.forEach(r=>{const a=state(r),b=seat(r),c=compliance(r),saved=justSaved===r.id;body.insertAdjacentHTML('beforeend',`<tr><td>${r.team}</td><td class="name">${r.name}</td><td>${r.base}</td><td>${r.facility}</td><td><button class="toggle ${b.toLowerCase()}" data-seat="${r.id}">${b==='Pending'?'Booked Seat':b}</button></td><td><button class="toggle ${a.toLowerCase()}" data-attend="${r.id}">${a==='Pending'?'Mark attendance':a}</button></td><td><span class="pill ${c.toLowerCase().replace(' ','-')}">${c}</span></td><td><div class="comment"><input data-note="${r.id}" value="${esc(note(r))}" placeholder="Add comment"><button class="${saved?'saved':'secondary'}" data-save="${r.id}">${saved?'Saved':'Save'}</button></div></td></tr>`)});});const yes=shown.filter(r=>state(r)==='Yes').length,no=shown.filter(r=>state(r)==='No').length,overall=people.filter(r=>state(r)==='Yes').length;$('#total').textContent=shown.length;$('#yesCount').textContent=yes;$('#noCount').textContent=no;$('#rate').textContent=shown.length?`${Math.round(yes/shown.length*100)}%`:'—';$('#overall').textContent=people.length?`${Math.round(overall/people.length*100)}%`:'—'}
+document.addEventListener('click',e=>{const id=e.target.dataset.attend,seatId=e.target.dataset.seat,saveId=e.target.dataset.save;if(id){const r=people.find(x=>x.id===id),v=state(r);attendance[key(r)]=v==='Pending'?'Yes':v==='Yes'?'No':'Pending';localStorage.setItem('rto-attendance-2026',JSON.stringify(attendance));render()}if(seatId){const r=people.find(x=>x.id===seatId),v=seat(r);seats[key(r)]=v==='Pending'?'Yes':v==='Yes'?'No':'Pending';localStorage.setItem('rto-booked-seats-2026',JSON.stringify(seats));render()}if(saveId){const r=people.find(x=>x.id===saveId);notes[key(r)]=$(`[data-note="${saveId}"]`).value.trim();localStorage.setItem('rto-comments-2026',JSON.stringify(notes));justSaved=saveId;render();$('#notice').classList.add('show');setTimeout(()=>$('#notice').classList.remove('show'),2400)}});[week,team].forEach(x=>x.addEventListener('change',render));search.addEventListener('input',render);$('#clear').onclick=()=>{team.value='All';search.value='';render()};$('#export').onclick=()=>{const data=[['Team','Resource name','Base location','Assigned facility','Booked seat for Monday','Monday','Monday attended','Compliance status','Comments'],...people.filter(r=>team.value==='All'||r.team===team.value).map(r=>[r.team,r.name,r.base,r.facility,seat(r),week.value,state(r),compliance(r),note(r)])],csv=data.map(row=>row.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`rto-compliance-${week.value}.csv`;a.click();URL.revokeObjectURL(a.href)};render();
+</script></body></html>
